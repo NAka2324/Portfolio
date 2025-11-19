@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3DCG 背景デザイナー ポートフォリオ</title>
+    <!-- Tailwind CSS CDNの読み込み --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontの設定 (Interを使用) --><style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* bodyの背景色は濃い色に戻す (スライダーをヒーローセクションに限定するため) */
+            background-color: #0f172a; /* slate-900 */
+            color: #f1f5f9; /* slate-100 */
+        }
+        /* スクロールバーのカスタムスタイル */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #334155; /* slate-700 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background-color: #1e293b; /* slate-800 */
+        }
+        
+        /* 背景スライダー用のカスタムスタイル */
+        .slider-image-container {
+            opacity: 0;
+            transition: opacity 1s ease-in-out; /* フェードイン・アウトの時間設定を1秒に短縮 */
+            pointer-events: none;
+        }
+        .slider-image-container.active {
+            opacity: 0.15; /* ヒーローセクション内に戻したので、透過度を調整 */
+        }
+
+        /* 背景スライダーのスタイルをヒーローセクション用に修正 */
+        #hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; 
+            background-color: #0f172a; 
+        }
+
+        /* 前回のbody全体背景用スタイルは削除 */
+        #body-background { display: none; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#6366f1', // indigo-500
+                        'secondary': '#818cf8', // indigo-400
+                        'dark-bg': '#0f172a', // slate-900
+                        'card-bg': '#1e293b', // slate-800
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased min-h-screen">
+
+    <!-- ヒーローセクションとナビゲーション --><header class="sticky top-0 z-50 bg-dark-bg/95 backdrop-blur-md shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- デザイナー名/ロゴ --><a href="#" class="text-2xl font-extrabold tracking-widest text-primary hover:text-secondary transition-colors">
+                [YOUR NAME] CG
+            </a>
+
+            <!-- ナビゲーション --><nav class="hidden md:flex space-x-6">
+                <a href="#hero" class="text-sm font-medium text-slate-300 hover:text-primary transition-colors">ホーム</a>
+                <a href="#portfolio" class="text-sm font-medium text-slate-300 hover:text-primary transition-colors">作品</a>
+                <a href="#contact" class="text-sm font-medium text-slate-300 hover:text-primary transition-colors">コンタクト</a>
+            </nav>
+            
+            <!-- モバイルメニューボタン (SVGアイコンを使用) --><button id="mobile-menu-button" class="md:hidden p-2 rounded-md hover:bg-card-bg transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        <!-- モバイルメニュー (初期非表示) --><div id="mobile-menu" class="hidden md:hidden bg-dark-bg border-t border-slate-800">
+            <nav class="flex flex-col space-y-2 px-4 py-3">
+                <a href="#hero" class="block py-2 text-slate-300 hover:text-primary transition-colors rounded-md">ホーム</a>
+                <a href="#portfolio" class="block py-2 text-slate-300 hover:text-primary transition-colors rounded-md">作品</a>
+                <a href="#contact" class="block py-2 text-slate-300 hover:text-primary transition-colors rounded-md">コンタクト</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <!-- ヒーローセクション --><section id="hero" class="relative overflow-hidden pt-24 pb-32 md:pt-32 md:pb-48 text-center">
+            
+            <!-- 背景画像スライダーコンテナ (z-index: 0) -->
+            <div id="hero-background" class="absolute inset-0 z-0 bg-dark-bg">
+                <!-- 画像はJavaScriptによってここに挿入されます -->
+            </div>
+
+            <!-- オーバーレイ (テキストを見やすくするためのグラデーション) --><div class="absolute inset-0 z-5 bg-gradient-to-t from-dark-bg/90 to-dark-bg/50"></div>
+            
+            <!-- ヒーローコンテンツ (z-index: 10) --><div class="container mx-auto px-4 relative z-10">
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black mb-4 leading-tight">
+                    <span class="text-primary">世界観を創造する</span><br>
+                    3DCG背景デザイナー
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-400 mb-8 max-w-3xl mx-auto">
+                    ゲーム、映像、メタバース向けに、没入感のあるリアルな環境をデザインしています。想像を超える「場所」を、ピクセルとして具現化します。
+                </p>
+                <a href="#portfolio" class="inline-block px-8 py-3 bg-primary text-white font-semibold rounded-full shadow-lg hover:bg-secondary transition duration-300 transform hover:scale-105">
+                    作品を見る
+                </a>
+            </div>
+        </section>
+
+        <!-- ポートフォリオギャラリーセクション --><section id="portfolio" class="py-16 md:py-24 bg-card-bg relative z-10">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">
+                    主要作品
+                </h2>
+                <div id="portfolio-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 作品カードはJavaScriptによってここに挿入されます --></div>
+            </div>
+        </section>
+
+        <!-- コンタクトセクション --><section id="contact" class="py-16 md:py-24 bg-dark-bg relative z-10">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+                    ご依頼・お問い合わせ
+                </h2>
+                <p class="text-lg text-slate-400 mb-8">
+                    プロジェクトのご相談や採用に関するお問い合わせなど、お気軽にご連絡ください。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <a href="mailto:your.email@example.com" class="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary font-semibold rounded-full hover:bg-primary hover:text-dark-bg transition duration-300">
+                        <!-- Icon: Mail --><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26c.72.48 1.62.48 2.34 0L21 8M3 8a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                        </svg>
+                        メールで連絡
+                    </a>
+                    <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-6 py-3 bg-slate-700 text-slate-100 font-semibold rounded-full hover:bg-slate-600 transition duration-300">
+                        <!-- Icon: Twitter/X (Placeholder) --><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h-2m0 0l-1-1m1 1l-1 1m3 0a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        SNSをチェック
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- フッター --><footer class="bg-dark-bg border-t border-slate-800 py-8 relative z-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-500">
+            <p>&copy; 2024 [YOUR NAME]. All Rights Reserved.</p>
+            <p class="mt-1 text-sm">3DCG Environment Artist Portfolio</p>
+        </div>
+    </footer>
+
+    <!-- 作品詳細モーダル (初期非表示) --><div id="project-modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-80 backdrop-blur-sm overflow-y-auto" onclick="closeModal(event)">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <!-- モーダルコンテンツ (クリックイベントを伝播させないために stopPropagation を追加) --><div class="bg-card-bg rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+                <div class="relative">
+                    <!-- 閉じるボタン --><button onclick="closeModal()" class="absolute top-4 right-4 p-2 text-white bg-black bg-opacity-50 rounded-full hover:bg-opacity-75 transition-all z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    
+                    <!-- 作品画像 --><img id="modal-image" src="" alt="作品画像" class="w-full h-auto object-cover rounded-t-xl" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/334155/f1f5f9?text=Image+Load+Error'">
+                    
+                    <div class="p-6 md:p-8">
+                        <!-- 作品タイトル --><h3 id="modal-title" class="text-3xl font-bold text-primary mb-3"></h3>
+                        
+                        <!-- 詳細情報 --><div class="space-y-4">
+                            <p class="text-sm text-slate-400">制作期間: <span id="modal-duration" class="font-medium text-slate-200"></span></p>
+                            <p class="text-sm text-slate-400">使用ツール: <span id="modal-tools" class="font-medium text-slate-200"></span></p>
+                        </div>
+                        
+                        <!-- 作品説明 --><div class="mt-6 border-t border-slate-700 pt-6">
+                            <h4 class="text-xl font-semibold mb-2">作品概要</h4>
+                            <p id="modal-description" class="text-slate-300 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------------------------------
+        // 背景スライダー用データ 
+        // ----------------------------------------------------
+        const backgroundImages = [
+            "uploaded:ohunesan.jpg-b1dba34d-5e6f-4321-983d-b4585bad3ff8", // 提供された画像 1 (完成画像)
+            "uploaded:wire.jpg-c0739aed-ff82-4781-ae14-cc10615878be",     // 提供された画像 2 (ワイヤーフレーム)
+            "uploaded:kkk.jpg-a38d4ade-ca56-43e7-b93e-6350a38e0f8c",       // 提供された画像 3 (グレーボックス/ライティング)
+            "uploaded:ohunesan.jpg-d1eb018c-cef0-4a4a-a143-937bf7cfe4b3"  // 提供された画像 4 (完成画像)
+        ];
+        
+        // ----------------------------------------------------
+        // 作品データ (更新)
+        // ----------------------------------------------------
+        const projects = [
+            {
+                id: 1,
+                // タイトルを更新: Groningenに変更
+                title: "オランダ・フローニンゲン運河",
+                category: "フォトリアル環境",
+                // 説明文を更新: Groningenに言及
+                description: "オランダ・フローニンゲンの古い運河都市をテーマにしたフォトリアルな環境です。水面の反射と、歴史を感じさせる建物のマテリアル表現、自然な植生に注力しました。",
+                duration: "8週間",
+                tools: "Unreal Engine 5, Maya, Substance Painter",
+                // 画像URLを更新
+                imageUrl: "uploaded:ohunesan.jpg-b8ef5f68-b845-4819-9053-98491a07642d",
+                thumbnailUrl: "uploaded:ohunesan.jpg-b8ef5f68-b845-4819-9053-98491a07642d"
+            },
+            {
+                id: 2,
+                title: "古代ファンタジー遺跡群",
+                category: "ゲーム背景",
+                description: "失われた文明の力を感じる幻想的な遺跡エリアです。プロシージャルな岩の配置と、光の差し込みによる神秘的な雰囲気の表現を追求しました。",
+                duration: "6週間",
+                tools: "Blender, ZBrush, Marmoset Toolbag",
+                imageUrl: "https://placehold.co/1200x600/334155/f1f5f9?text=Fantasy+Ruins",
+                thumbnailUrl: "https://placehold.co/400x200/334155/f1f5f9?text=Ruins+Thumbnail"
+            },
+            {
+                id: 3,
+                title: "深宇宙ステーション・ラボ",
+                category: "映像・シネマティクス",
+                description: "映画向けに制作した、機能的で無機質なSF研究所の内部環境です。テクスチャの解像度とライティングの整合性を最優先に仕上げています。",
+                duration: "5週間",
+                tools: "Houdini, Clarisse, Nuke",
+                imageUrl: "https://placehold.co/1200x600/0f172a/94a3b8?text=Sci-Fi+Lab",
+                thumbnailUrl: "https://placehold.co/400x200/0f172a/94a3b8?text=Lab+Thumbnail"
+            },
+            {
+                id: 4,
+                title: "和風庭園の昼下がり",
+                category: "環境アセット",
+                description: "静けさをテーマにした日本の伝統的な庭園です。植栽や水面の表現にこだわり、心地よい日差しが差し込む風景を再現しました。",
+                duration: "4週間",
+                tools: "UE4, SpeedTree, Substance Designer",
+                imageUrl: "https://placehold.co/1200x600/475569/e2e8f0?text=Japanese+Garden",
+                thumbnailUrl: "https://placehold.co/400x200/475569/e2e8f0?text=Garden+Thumbnail"
+            }
+        ];
+
+        // ----------------------------------------------------
+        // 背景スライダー機能
+        // ----------------------------------------------------
+        let currentImageIndex = 0;
+        let sliderElements = [];
+        const intervalTime = 1000; // 1秒 (1000ミリ秒) に設定
+
+        /**
+         * 背景スライダーの要素をDOMに挿入する
+         */
+        function renderBackgroundSlider() {
+            // IDを body-background から hero-background に戻します
+            const container = document.getElementById('hero-background');
+            if (!container) return;
+
+            backgroundImages.forEach((url, index) => {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'slider-image-container absolute inset-0';
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Background Image ${index + 1}`;
+                img.className = 'w-full h-full object-cover';
+                img.onerror = function() {
+                    this.onerror=null;
+                    this.src='https://placehold.co/1920x1080/0f172a/6366f1?text=Image+Error';
+                };
+                
+                imgContainer.appendChild(img);
+                container.appendChild(imgContainer);
+                sliderElements.push(imgContainer);
+            });
+
+            // 最初の画像をアクティブにする
+            if (sliderElements.length > 0) {
+                sliderElements[0].classList.add('active');
+            }
+
+            // スライダーを起動
+            startBackgroundSlider();
+        }
+
+        /**
+         * 背景画像を自動で切り替える
+         */
+        function startBackgroundSlider() {
+            // 1秒ごとに画像を切り替える
+            setInterval(() => {
+                // 現在のアクティブな画像を非アクティブにする
+                sliderElements[currentImageIndex].classList.remove('active');
+
+                // インデックスを更新
+                currentImageIndex = (currentImageIndex + 1) % sliderElements.length;
+
+                // 新しい画像をアクティブにする
+                sliderElements[currentImageIndex].classList.add('active');
+
+            }, intervalTime); // 1000ミリ秒 (1秒) ごとに切り替え
+        }
+
+        // ----------------------------------------------------
+        // DOM操作とイベントリスナー (既存の機能)
+        // ----------------------------------------------------
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBackgroundSlider(); // 背景スライダーのレンダリングと起動
+            renderProjects();
+            setupMobileMenu();
+        });
+
+        /**
+         * 作品グリッドをレンダリングする (既存のまま)
+         */
+        function renderProjects() {
+            const grid = document.getElementById('portfolio-grid');
+            if (!grid) return;
+
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'bg-dark-bg rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-[1.02] transition duration-300 group';
+                card.innerHTML = `
+                    <div class="relative overflow-hidden">
+                        <!-- 作品サムネイル画像 --><img src="${project.thumbnailUrl}" 
+                             alt="${project.title} サムネイル" 
+                             class="w-full h-48 object-cover transition duration-500 group-hover:opacity-75"
+                             onerror="this.onerror=null;this.src='https://placehold.co/400x200/334155/f1f5f9?text=Error+Loading+Image'">
+                        <!-- カテゴリバッジ --><span class="absolute top-3 left-3 bg-primary text-xs font-bold px-3 py-1 rounded-full text-dark-bg opacity-90">
+                            ${project.category}
+                        </span>
+                    </div>
+                    
+                    <div class="p-5">
+                        <h3 class="text-xl font-semibold mb-1 text-slate-100 group-hover:text-secondary transition-colors">
+                            ${project.title}
+                        </h3>
+                        <p class="text-sm text-slate-400 line-clamp-2">
+                            ${project.description}
+                        </p>
+                    </div>
+                `;
+                card.onclick = () => openModal(project.id);
+                grid.appendChild(card);
+            });
+        }
+
+        /**
+         * 作品詳細モーダルを開く (既存のまま)
+         */
+        function openModal(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            const modal = document.getElementById('project-modal');
+
+            if (!project || !modal) {
+                console.error("作品またはモーダルが見つかりません。");
+                return;
+            }
+
+            // モーダルコンテンツの更新
+            document.getElementById('modal-title').textContent = project.title;
+            document.getElementById('modal-description').textContent = project.description;
+            document.getElementById('modal-duration').textContent = project.duration;
+            document.getElementById('modal-tools').textContent = project.tools;
+            document.getElementById('modal-image').src = project.imageUrl;
+            document.getElementById('modal-image').alt = `${project.title} のフル画像`;
+
+            // モーダルを表示
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // 背景スクロールを禁止
+        }
+
+        /**
+         * 作品詳細モーダルを閉じる (既存のまま)
+         */
+        function closeModal(event) {
+            // モーダルの外側をクリックした場合のみ閉じる
+            if (event && event.target.id !== 'project-modal') {
+                return;
+            }
+            
+            const modal = document.getElementById('project-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // 背景スクロールを許可
+            }
+        }
+
+        /**
+         * モバイルメニューのトグル設定 (既存のまま)
+         */
+        function setupMobileMenu() {
+            const button = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+
+            if (button && menu) {
+                button.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+
+                // メニューリンククリック時もメニューを閉じる
+                menu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        menu.classList.add('hidden');
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
