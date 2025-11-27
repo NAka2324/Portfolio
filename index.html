@@ -3,29 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3DCGデザイナー ポートフォリオ | [あなたの名前]</title>
-    <!-- Tailwind CSS CDNをロード -->
+    <title>3DCG 背景デザイナー ポートフォリオ</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Cinzel & Noto Sans JP -->
     <style>
-        /* ネオ・ダークテーマ用のスタイル */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* 濃いネイビー/ダークブルー */
-            color: #f1f5f9; /* 明るいテキスト */
-            line-height: 1.6;
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #050505;
+            color: #e2e8f0;
+            overflow-x: hidden;
         }
-        /* スムーズスクロール */
-        html {
-            scroll-behavior: smooth;
+
+        h1, h2, h3, .font-cinzel { font-family: 'Cinzel', serif; }
+
+        /* カスタムスクロールバー */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background-color: #4f46e5; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background-color: #0f172a; }
+
+        /* スライダー画像 */
+        .slider-image-container {
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            pointer-events: none;
+            filter: brightness(0.6) contrast(1.1);
         }
-        /* セクション間のサイバーな区切り線スタイル */
-        .section-divider {
-            height: 2px;
-            background-image: linear-gradient(to right, #10b981, #1e293b, #10b981); /* ネオングリーン系のグラデーション */
-            width: 70%; 
-            margin: 8rem auto 4rem auto;
-            border-radius: 9999px;
-            opacity: 0.5;
+        .slider-image-container.active { opacity: 1; }
+
+        /* グラスモーフィズム */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* テキスト装飾 */
+        .hero-title-gradient {
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(165, 180, 252, 0.3);
+        }
+
+        /* 作品カード */
+        .portfolio-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            aspect-ratio: 16/9;
+        }
+        .portfolio-card img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .portfolio-card:hover img { transform: scale(1.1); }
+        .portfolio-card .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+        .portfolio-card:hover .overlay { opacity: 1; }
+        
+        /* アニメーション */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* スキルバーアニメーション */
+        @keyframes fillBar {
+            from { width: 0; }
+        }
+        .skill-bar-fill {
+            animation: fillBar 1.5s ease-out forwards;
         }
     </style>
     <script>
@@ -33,430 +101,465 @@
             theme: {
                 extend: {
                     colors: {
-                        'primary-accent': '#10b981', // Emerald 500 (ネオングリーン)
-                        'dark-bg': '#0f172a', // メインのダーク背景
-                        'element-bg': '#1e293b', // 要素のダーク背景
-                        'light-text': '#f1f5f9', // 明るいテキスト
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'], 
+                        primary: '#6366f1',
+                        secondary: '#818cf8',
+                        dark: '#050505',
+                        surface: '#0f172a',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-dark-bg text-light-text font-sans">
+<body class="antialiased min-h-screen selection:bg-primary selection:text-white">
 
-    <!-- ナビゲーションバー (ダーク基調) -->
-    <header class="sticky top-0 z-50 bg-dark-bg bg-opacity-90 shadow-xl shadow-black/20 backdrop-blur-sm border-b border-primary-accent/30">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <!-- ロゴ/デザイナー名 -->
-            <a href="#home" class="text-3xl font-extrabold tracking-widest text-primary-accent hover:text-light-text transition">
-                [YOUR NAME]
+    <!-- ナビゲーション -->
+    <header class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-cinzel font-bold text-white tracking-widest hover:text-primary transition-colors">
+                [YOUR NAME] <span class="text-primary text-sm align-top">CG</span>
             </a>
 
-            <!-- デスクトップメニュー (TECHNICAL BREAKDOWNを削除) -->
-            <div class="hidden md:flex space-x-8">
-                <a href="#home" class="text-lg font-medium hover:text-primary-accent transition duration-300 relative group p-2">
-                    HOME
-                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </a>
-                <a href="#works" class="text-lg font-medium hover:text-primary-accent transition duration-300 relative group p-2">
-                    WORKS
-                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </a>
-                <a href="#process" class="text-lg font-medium hover:text-primary-accent transition duration-300 relative group p-2">
-                    PROCESS
-                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </a>
-                <a href="#about" class="text-lg font-medium hover:text-primary-accent transition duration-300 relative group p-2">
-                    ABOUT
-                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </a>
-                <a href="#resume" class="text-lg font-medium hover:text-primary-accent transition duration-300 relative group p-2">
-                    RESUME
-                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </a>
-                <a href="#contact" class="text-lg font-medium px-4 py-2 border border-primary-accent text-primary-accent hover:bg-primary-accent hover:text-dark-bg transition duration-300 rounded-full">
-                    CONTACT
-                </a>
-            </div>
-
-            <!-- モバイルメニューボタン -->
-            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md hover:bg-element-bg focus:outline-none focus:ring-2 focus:ring-primary-accent">
-                <svg class="w-6 h-6 text-primary-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#hero" class="text-sm font-medium text-slate-300 hover:text-white hover:tracking-widest transition-all duration-300">HOME</a>
+                <a href="#portfolio" class="text-sm font-medium text-slate-300 hover:text-white hover:tracking-widest transition-all duration-300">WORKS</a>
+                <a href="#profile" class="text-sm font-medium text-slate-300 hover:text-white hover:tracking-widest transition-all duration-300">PROFILE</a>
+                <a href="#contact" class="text-sm font-medium text-slate-300 hover:text-white hover:tracking-widest transition-all duration-300">CONTACT</a>
+            </nav>
+            
+            <button id="mobile-menu-button" class="md:hidden text-white hover:text-primary transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
             </button>
-        </nav>
-
-        <!-- モバイルメニューコンテンツ (TECHNICAL BREAKDOWNを削除) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-element-bg shadow-lg">
-            <a href="#home" class="block py-3 px-4 text-center border-t border-dark-bg hover:bg-dark-bg transition hover:text-primary-accent">HOME</a>
-            <a href="#works" class="block py-3 px-4 text-center border-t border-dark-bg hover:bg-dark-bg transition hover:text-primary-accent">WORKS</a>
-            <a href="#process" class="block py-3 px-4 text-center border-t border-dark-bg hover:bg-dark-bg transition hover:text-primary-accent">PROCESS</a>
-            <a href="#about" class="block py-3 px-4 text-center border-t border-dark-bg hover:bg-dark-bg transition hover:text-primary-accent">ABOUT</a>
-            <a href="#resume" class="block py-3 px-4 text-center border-t border-dark-bg hover:bg-dark-bg transition hover:text-primary-accent">RESUME</a>
-            <a href="#contact" class="block py-3 px-4 text-center border-t border-dark-bg hover:bg-dark-bg transition hover:text-primary-accent">CONTACT</a>
+        </div>
+        <!-- モバイルメニュー -->
+        <div id="mobile-menu" class="hidden md:hidden bg-black/95 backdrop-blur-xl absolute w-full border-t border-white/10">
+            <nav class="flex flex-col p-4 space-y-4 text-center">
+                <a href="#hero" class="text-slate-300 hover:text-white py-2">HOME</a>
+                <a href="#portfolio" class="text-slate-300 hover:text-white py-2">WORKS</a>
+                <a href="#profile" class="text-slate-300 hover:text-white py-2">PROFILE</a>
+                <a href="#contact" class="text-slate-300 hover:text-white py-2">CONTACT</a>
+            </nav>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8">
-
+    <main>
         <!-- ヒーローセクション -->
-        <section id="home" class="pt-32 pb-40 text-center min-h-screen flex flex-col justify-center items-center">
-            <div class="max-w-6xl mx-auto">
-                <p class="text-2xl sm:text-3xl font-bold text-primary-accent mb-6 tracking-widest uppercase animate-pulse">3D Environment & VFX Specialist</p>
-                <h1 class="text-7xl sm:text-8xl lg:text-9xl font-extrabold mb-10 tracking-tighter leading-none">
-                    <span class="block text-light-text/80">BUILDING</span>
-                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-primary-accent to-green-300">THE DIGITAL FRONTIER</span>
+        <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+            <div id="hero-background" class="absolute inset-0 z-0 bg-black"></div>
+            <div class="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_0%,#000_100%)] opacity-80"></div>
+            <div class="absolute inset-0 z-10 bg-black/40"></div>
+            
+            <div class="container mx-auto px-4 relative z-20 text-center reveal active">
+                <p class="text-primary tracking-[0.3em] text-sm md:text-base mb-4 font-bold uppercase">Environment Artist Portfolio</p>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight hero-title-gradient">
+                    BUILDING<br>WORLDS
                 </h1>
-                <p class="text-xl sm:text-2xl text-light-text/70 mb-12 max-w-4xl mx-auto">
-                    Unreal EngineとHoudiniを駆使し、リアルタイムレンダリングにおける没入感のある世界と、視覚的に衝撃的なエフェクトを創造します。
+                <p class="text-slate-300 text-sm md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-light tracking-wide">
+                    想像を超える「場所」を、ピクセルとして具現化する。<br>
+                    ゲーム、映像、メタバースのための没入型環境デザイン。
                 </p>
-                <a href="#works" class="inline-flex items-center justify-center px-12 py-4 text-lg font-bold rounded-full shadow-lg text-dark-bg bg-primary-accent hover:bg-green-300 transition duration-500 transform hover:scale-105 uppercase tracking-wider">
-                    View Project
-                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                <a href="#portfolio" class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-white text-black font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+                    VIEW WORKS
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                 </a>
             </div>
         </section>
 
-        <!-- 作品セクション -->
-        <div class="section-divider"></div>
-
-        <section id="works" class="py-24">
-            <h2 class="text-5xl font-extrabold text-center mb-16 uppercase tracking-widest text-light-text">PROJECT SHOWCASE</h2>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <!-- 作品カード 1: ネオ・ダークスタイル -->
-                <div class="group bg-element-bg rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 hover:border-primary-accent" onclick="showWorkDetails('サイバーパンク・シティ', 'Unreal Engineでの巨大なリアルタイム環境の構築とライティング。', 'https://raw.githubusercontent.com/NAka2324/Portfolio/refs/heads/main/image/ohunesan_result.jpg')">
-                    <img src="https://raw.githubusercontent.com/NAka2324/Portfolio/refs/heads/main/image/ohunesan_result.jpg">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-1 text-primary-accent">サイバーパンク・シティ</h3>
-                        <p class="text-light-text/70 text-sm font-medium">#UE5 #環境デザイン #リアルタイム</p>
-                    </div>
-                </div>
-
-                <!-- 作品カード 2 -->
-                <div class="group bg-element-bg rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 hover:border-primary-accent" onclick="showWorkDetails('ハイテク・ドローン', 'ZBrushとSubstance Painterを使用した高品質なハードサーフェスモデリング。', 'https://placehold.co/600x400/10b981/0f172a?text=TECH+DRONE')">
-                    <img src="https://placehold.co/600x400/10b981/0f172a?text=TECH+DRONE" alt="作品2" class="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-80 group-hover:brightness-110">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-1 text-primary-accent">ハイテク・ドローン</h3>
-                        <p class="text-light-text/70 text-sm font-medium">#ハードサーフェス #モデリング #PBR</p>
-                    </div>
-                </div>
-                
-                <!-- 作品カード 3 -->
-                <div class="group bg-element-bg rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 hover:border-primary-accent" onclick="showWorkDetails('エネルギー波エフェクト', 'Houdiniによる高度なパーティクルシミュレーションとシェーダー開発。', 'https://placehold.co/600x400/10b981/0f172a?text=ENERGY+VFX')">
-                    <img src="https://placehold.co/600x400/10b981/0f172a?text=ENERGY+VFX" alt="作品3" class="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-80 group-hover:brightness-110">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-1 text-primary-accent">エネルギー波エフェクト</h3>
-                        <p class="text-light-text/70 text-sm font-medium">#Houdini #VFX #シミュレーション</p>
-                    </div>
-                </div>
-
-                <!-- 作品カード 4 -->
-                <div class="group bg-element-bg rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 hover:border-primary-accent" onclick="showWorkDetails('SFアサルトライフル', 'ハイポリからローポリへの最適化とテクスチャベイク。', 'https://placehold.co/600x400/10b981/0f172a?text=SF+WEAPON')">
-                    <img src="https://placehold.co/600x400/10b981/0f172a?text=SF+WEAPON" alt="作品4" class="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-80 group-hover:brightness-110">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-1 text-primary-accent">SFアサルトライフル</h3>
-                        <p class="text-light-text/70 text-sm font-medium">#プロップ #ゲームアセット #Substance</p>
-                    </div>
-                </div>
-                
-                <!-- 作品カード 5 (追加) -->
-                <div class="group bg-element-bg rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 hover:border-primary-accent" onclick="showWorkDetails('異星の風景', 'プロシージャルな地形生成とフォトバッシング技術の融合。', 'https://placehold.co/600x400/10b981/0f172a?text=ALIEN+LANDSCAPE')">
-                    <img src="https://placehold.co/600x400/10b981/0f172a?text=ALIEN+LANDSCAPE" alt="作品5" class="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-80 group-hover:brightness-110">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-1 text-primary-accent">異星の風景</h3>
-                        <p class="text-light-text/70 text-sm font-medium">#環境アート #プロシージャル #UE</p>
-                    </div>
-                </div>
-
-                <!-- 作品カード 6 (追加) -->
-                <div class="group bg-element-bg rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 hover:border-primary-accent" onclick="showWorkDetails('破壊シミュレーション', 'RBD（剛体ダイナミクス）とPyroFXを用いた大規模な破壊表現。', 'https://placehold.co/600x400/10b981/0f172a?text=DESTRUCTION+FX')">
-                    <img src="https://placehold.co/600x400/10b981/0f172a?text=DESTRUCTION+FX" alt="作品6" class="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-80 group-hover:brightness-110">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-1 text-primary-accent">破壊シミュレーション</h3>
-                        <p class="text-light-text/70 text-sm font-medium">#Houdini #RBD #VFX</p>
-                    </div>
-                </div>
-
-            </div>
-            
-            <!-- モーダルのプレースホルダー（作品詳細クリック時に表示するUI） -->
-            <div id="work-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-4 z-[999]" onclick="closeModal()">
-                <div class="bg-element-bg rounded-lg max-w-3xl w-full p-8 relative shadow-2xl border border-primary-accent/50" onclick="event.stopPropagation()">
-                    <button class="absolute top-4 right-4 text-primary-accent hover:text-light-text transition" onclick="closeModal()">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                    <img id="modal-image" src="" alt="作品詳細" class="w-full h-auto rounded-lg mb-6 border-2 border-primary-accent/20">
-                    <h3 id="modal-title" class="text-3xl font-bold mb-3 text-primary-accent uppercase tracking-tight"></h3>
-                    <p id="modal-description" class="text-light-text/80"></p>
-                    <p class="mt-6 text-sm text-light-text/50">※ このモーダルはデモです。実際には作品の詳細な解説、ワイヤーフレーム、制作プロセスなどを記載します。</p>
-                </div>
-            </div>
-        </section>
-        
-        <!-- 制作プロセスセクション -->
-        <div class="section-divider"></div>
-
-        <section id="process" class="py-24">
-            <h2 class="text-5xl font-extrabold text-center mb-16 uppercase tracking-widest text-light-text">PRODUCTION PROCESS</h2>
-            <div class="max-w-5xl mx-auto space-y-12">
-                <!-- ステップ 1: コンセプト & 計画 -->
-                <div class="bg-element-bg p-8 rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 flex flex-col md:flex-row items-start gap-8">
-                    <div class="md:w-1/4 flex-shrink-0">
-                        <span class="text-6xl font-extrabold text-primary-accent block leading-none">01</span>
-                        <h3 class="text-2xl font-bold mt-2 uppercase">CONCEPT</h3>
-                    </div>
-                    <div class="md:w-3/4">
-                        <p class="text-lg text-light-text/80">
-                            プロジェクトの初期段階では、ムードボード、リファレンスの収集、コンセプトアートの作成に注力します。この段階で、技術的な要件とアートディレクションを明確にし、制作のロードマップを確立します。
-                        </p>
-                        <p class="mt-4 text-sm text-light-text/60">
-                            主なツール: Photoshop, PureRef, 業界標準設計ドキュメント
-                        </p>
-                    </div>
-                </div>
-
-                <!-- ステップ 2: 3Dモデリング & スカルプト -->
-                <div class="bg-element-bg p-8 rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 flex flex-col md:flex-row items-start gap-8">
-                    <div class="md:w-1/4 flex-shrink-0">
-                        <span class="text-6xl font-extrabold text-primary-accent block leading-none">02</span>
-                        <h3 class="text-2xl font-bold mt-2 uppercase">MODELING</h3>
-                    </div>
-                    <div class="md:w-3/4">
-                        <p class="text-lg text-light-text/80">
-                            ハイポリモデルのスカルプト（ZBrush）、ハードサーフェスモデリング（Blender/Maya）を経て、ゲームエンジン向けの最適化されたローポリゴンモデルを作成します。トポロジーとUV展開の正確性を最優先します。
-                        </p>
-                        <p class="mt-4 text-sm text-light-text/60">
-                            主なツール: ZBrush, Blender, Maya
-                        </p>
-                    </div>
-                </div>
-
-                <!-- ステップ 3: テクスチャ & マテリアル -->
-                <div class="bg-element-bg p-8 rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20 flex flex-col md:flex-row items-start gap-8">
-                    <div class="md:w-1/4 flex-shrink-0">
-                        <span class="text-6xl font-extrabold text-primary-accent block leading-none">03</span>
-                        <h3 class="text-2xl font-bold mt-2 uppercase">TEXTURING</h3>
-                    </div>
-                    <div class="md:w-3/4">
-                        <p class="text-lg text-light-text/80">
-                            PBRワークフローに基づき、Substance Painterで詳細なテクスチャを作成し、モデルにリアリティを与えます。環境アセットにはSubstance Designerを用いたプロシージャルなアプローチも取り入れます。
-                        </p>
-                        <p class="mt-4 text-sm text-light-text/60">
-                            主なツール: Substance Painter, Substance Designer
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- TECHNICAL BREAKDOWNセクションは削除されました -->
-
-
-        <!-- 紹介セクション -->
-        <div class="section-divider"></div>
-
-        <section id="about" class="py-24">
-            <h2 class="text-5xl font-extrabold text-center mb-16 uppercase tracking-widest text-light-text">SKILLS & EXPERTISE</h2>
-            <div class="max-w-4xl mx-auto bg-element-bg p-10 rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20">
-                <div class="flex flex-col md:flex-row items-start gap-12">
-                    <!-- テキスト (左側) -->
-                    <div class="md:w-3/5 md:pr-4">
-                        <h3 class="text-3xl font-bold mb-4 text-primary-accent uppercase">CORE FOCUS</h3>
-                        <p class="text-lg text-light-text/80 mb-6">
-                            CG歴[X]年。私の専門は、特にゲームエンジン（Unreal Engine）を活用した**高性能なリアルタイムアセット制作**です。スピードと最適化を意識しつつ、最終的な映像品質を妥協しないアプローチを心がけています。
-                        </p>
-                        <p class="text-lg text-light-text/80">
-                            大規模な環境制作、カスタムシェーダー開発、そしてHoudiniを用いた破壊や流体シミュレーションが得意分野です。
-                        </p>
-                    </div>
-                    
-                    <!-- スキル/ツール (右側) -->
-                    <div class="md:w-2/5 w-full">
-                        <h4 class="text-2xl font-bold mb-5 border-b-2 border-primary-accent pb-2 uppercase tracking-wide">TOOLSET</h4>
-                        <ul class="space-y-4">
-                            <li class="flex items-center text-lg font-medium">
-                                <span class="w-3 h-3 mr-3 bg-primary-accent rounded-full flex-shrink-0 shadow-lg shadow-primary-accent/50"></span>Unreal Engine 5 (Blueprint/Material)
-                            </li>
-                            <li class="flex items-center text-lg font-medium">
-                                <span class="w-3 h-3 mr-3 bg-primary-accent rounded-full flex-shrink-0 shadow-lg shadow-primary-accent/50"></span>Houdini (VFX/Procedural)
-                            </li>
-                            <li class="flex items-center text-lg font-medium">
-                                <span class="w-3 h-3 mr-3 bg-primary-accent rounded-full flex-shrink-0 shadow-lg shadow-primary-accent/50"></span>Blender / Maya (Modeling)
-                            </li>
-                            <li class="flex items-center text-lg font-medium">
-                                <span class="w-3 h-3 mr-3 bg-primary-accent rounded-full flex-shrink-0 shadow-lg shadow-primary-accent/50"></span>Substance Suite (Texturing/PBR)
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 経歴/スキルシートセクション -->
-        <div class="section-divider"></div>
-
-        <section id="resume" class="py-24">
-            <h2 class="text-5xl font-extrabold text-center mb-16 uppercase tracking-widest text-light-text">RESUME / EXPERIENCE</h2>
-            <div class="max-w-5xl mx-auto bg-element-bg p-10 rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20">
-                <h3 class="text-3xl font-bold mb-6 border-b border-primary-accent/50 pb-2 text-primary-accent uppercase">WORK HISTORY</h3>
-                
-                <!-- 職歴 1 -->
-                <div class="mb-8 border-b border-light-text/10 pb-6">
-                    <div class="flex justify-between items-start flex-wrap">
-                        <h4 class="text-2xl font-bold text-light-text">シニア環境アーティスト</h4>
-                        <span class="text-lg font-medium text-primary-accent">2021年4月 - 現在</span>
-                    </div>
-                    <p class="text-lg text-light-text/70 mt-1">AAAゲームスタジオ | 東京</p>
-                    <ul class="list-disc ml-6 mt-3 space-y-2 text-light-text/80">
-                        <li>Unreal Engine 5を使用した次世代オープンワールド環境のリードアーティストとして、開発パイプラインを確立。</li>
-                        <li>フォトグラメトリーデータの後処理とゲーム内実装を担当し、高いリアリティを実現。</li>
-                        <li>5人のジュニアアーティストの指導と技術レビューを実施し、品質向上に貢献。</li>
-                    </ul>
-                </div>
-                
-                <!-- 職歴 2 -->
-                <div class="mb-8 border-b border-light-text/10 pb-6">
-                    <div class="flex justify-between items-start flex-wrap">
-                        <h4 class="text-2xl font-bold text-light-text">VFX/モデリングアーティスト</h4>
-                        <span class="text-lg font-medium text-primary-accent">2018年7月 - 2021年3月</span>
-                    </div>
-                    <p class="text-lg text-light-text/70 mt-1">映像制作プロダクション | 大阪</p>
-                    <ul class="list-disc ml-6 mt-3 space-y-2 text-light-text/80">
-                        <li>CM、映画向けの破壊、流体、パーティクルなどのHoudiniシミュレーション業務を担当。</li>
-                        <li>クライアントの要求に応じたアセットのモデリング、テクスチャリングを期日内に完了。</li>
-                    </ul>
-                </div>
-
-                <h3 class="text-3xl font-bold mt-12 mb-6 border-b border-primary-accent/50 pb-2 text-primary-accent uppercase">EDUCATION</h3>
-                <!-- 学歴 -->
-                <div class="mb-4">
-                    <div class="flex justify-between items-start flex-wrap">
-                        <h4 class="text-2xl font-bold text-light-text">デジタルアート修士号</h4>
-                        <span class="text-lg font-medium text-primary-accent">2016年 - 2018年</span>
-                    </div>
-                    <p class="text-lg text-light-text/70 mt-1">〇〇大学 芸術学部</p>
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- 連絡先セクション -->
-        <div class="section-divider"></div>
-
-        <section id="contact" class="py-24">
-            <h2 class="text-5xl font-extrabold text-center mb-16 uppercase tracking-widest text-light-text">CONNECT</h2>
-            <div class="max-w-xl mx-auto bg-element-bg p-10 rounded-xl shadow-2xl shadow-black/50 border border-primary-accent/20">
-                <p class="text-xl text-center mb-8 text-light-text/80">
-                    コラボレーション、またはご依頼について、お気軽にお問い合わせください。
-                </p>
-                <form action="#" method="POST" class="space-y-6">
+        <!-- ポートフォリオセクション -->
+        <section id="portfolio" class="py-24 bg-dark relative z-10">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
                     <div>
-                        <label for="name" class="block text-sm font-medium mb-1 tracking-wider text-primary-accent uppercase">NAME</label>
-                        <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-dark-bg border border-primary-accent/50 rounded-lg focus:ring-primary-accent focus:border-primary-accent placeholder-light-text/50">
+                        <h2 class="text-4xl md:text-5xl font-bold text-white mb-2">SELECTED WORKS</h2>
+                        <div class="h-1 w-20 bg-primary"></div>
                     </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium mb-1 tracking-wider text-primary-accent uppercase">EMAIL</label>
-                        <input type="email" id="email" name="email" required class="w-full px-4 py-3 bg-dark-bg border border-primary-accent/50 rounded-lg focus:ring-primary-accent focus:border-primary-accent placeholder-light-text/50">
-                    </div>
-                    <div>
-                        <label for="message" class="block text-sm font-medium mb-1 tracking-wider text-primary-accent uppercase">MESSAGE</label>
-                        <textarea id="message" name="message" rows="5" required class="w-full px-4 py-3 bg-dark-bg border border-primary-accent/50 rounded-lg focus:ring-primary-accent focus:border-primary-accent placeholder-light-text/50"></textarea>
-                    </div>
-                    <button type="submit" class="w-full flex justify-center items-center px-6 py-3 border border-primary-accent text-lg font-bold text-primary-accent hover:bg-primary-accent hover:text-dark-bg transition duration-500 rounded-full uppercase tracking-widest shadow-lg shadow-primary-accent/30">
-                        SEND TRANSMISSION
-                    </button>
-                    <p class="text-center text-xs text-light-text/40 mt-6">
-                        ※ フォーム送信機能は実装されていません。
+                    <p class="text-slate-400 mt-4 md:mt-0 text-right">
+                        フォトリアルからスタイライズドまで、<br>物語を感じさせる背景美術。
                     </p>
-                </form>
+                </div>
+                <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                    <!-- JSで挿入 -->
+                </div>
             </div>
         </section>
 
+        <!-- プロフィールセクション -->
+        <section id="profile" class="py-24 bg-[#080808] relative border-t border-white/5">
+            <div class="container mx-auto px-6 reveal">
+                <div class="flex flex-col lg:flex-row gap-16 items-center lg:items-start">
+                    <!-- プロフィール画像エリア -->
+                    <div class="w-full lg:w-1/3 flex flex-col items-center text-center">
+                        <div class="relative w-64 h-64 mb-8">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-primary to-purple-500 rounded-full blur opacity-40 animate-pulse"></div>
+                            <img src="https://placehold.co/400x400/1e293b/ffffff?text=Artist" alt="Profile" class="relative w-full h-full object-cover rounded-full border-4 border-[#1a1a1a] shadow-2xl grayscale hover:grayscale-0 transition-all duration-500">
+                        </div>
+                        <h2 class="text-3xl font-cinzel font-bold text-white mb-2">[YOUR NAME]</h2>
+                        <p class="text-primary tracking-widest text-sm font-bold uppercase mb-6">3DCG Environment Artist</p>
+                        
+                        <div class="flex space-x-4">
+                            <a href="#" class="p-3 bg-white/5 rounded-full hover:bg-primary hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+                            <a href="#" class="p-3 bg-white/5 rounded-full hover:bg-primary hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                            <a href="#" class="p-3 bg-white/5 rounded-full hover:bg-primary hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                        </div>
+                    </div>
+
+                    <!-- テキストエリア -->
+                    <div class="w-full lg:w-2/3">
+                        <h3 class="text-2xl font-bold text-white mb-6 border-l-4 border-primary pl-4">ABOUT ME</h3>
+                        <div class="space-y-4 text-slate-300 leading-relaxed mb-10 font-light">
+                            <p>
+                                デジタル空間に「物語」と「歴史」を刻む背景アーティストです。単にリアルなだけでなく、その場所に誰が住み、どのような時間を過ごしてきたのかが伝わる環境デザインを心がけています。
+                            </p>
+                            <p>
+                                建築様式や自然現象の観察に基づいた説得力のある造形と、最新のレンダリング技術を組み合わせ、プレイヤーの没入感を最大化する空間作りを追求しています。ゲームエンジン（UE5）でのリアルタイムレンダリングと最適化を得意としています。
+                            </p>
+                        </div>
+
+                        <!-- スキルバー -->
+                        <h3 class="text-xl font-bold text-white mb-6">SKILLS</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2 text-sm font-bold text-slate-400">
+                                    <span>Unreal Engine 5</span>
+                                    <span>95%</span>
+                                </div>
+                                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary skill-bar-fill" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2 text-sm font-bold text-slate-400">
+                                    <span>Maya / Blender</span>
+                                    <span>90%</span>
+                                </div>
+                                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-secondary skill-bar-fill" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2 text-sm font-bold text-slate-400">
+                                    <span>Substance Painter / Designer</span>
+                                    <span>85%</span>
+                                </div>
+                                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-indigo-400 skill-bar-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2 text-sm font-bold text-slate-400">
+                                    <span>ZBrush</span>
+                                    <span>80%</span>
+                                </div>
+                                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-indigo-300 skill-bar-fill" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- コンタクトセクション -->
+        <section id="contact" class="py-24 relative overflow-hidden bg-[#0a0a0a]">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div class="container mx-auto px-6 relative z-10 max-w-4xl text-center reveal">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-8">LET'S CREATE TOGETHER</h2>
+                <p class="text-slate-400 text-lg mb-12">
+                    新しいプロジェクトのご相談をお待ちしております。
+                </p>
+                <a href="mailto:your.email@example.com" class="inline-flex items-center justify-center px-10 py-4 bg-primary text-white font-bold rounded-lg shadow-lg hover:bg-secondary transition-all transform hover:-translate-y-1">
+                    CONTACT ME
+                </a>
+            </div>
+        </section>
     </main>
 
-    <!-- フッター -->
-    <footer class="bg-element-bg mt-32 border-t-4 border-primary-accent/50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">
-            <p class="text-lg text-primary-accent mb-4 tracking-widest uppercase">[YOUR NAME]</p>
-            <div class="flex justify-center space-x-6 mb-4">
-                <!-- SNSアイコンのプレースホルダー -->
-                <a href="#" class="text-light-text/50 hover:text-primary-accent transition">
-                    <img src="https://placehold.co/24x24/10b981/0f172a?text=X" alt="X (Twitter)" class="rounded-full">
-                </a>
-                <a href="#" class="text-light-text/50 hover:text-primary-accent transition">
-                    <img src="https://placehold.co/24x24/10b981/0f172a?text=A" alt="ArtStation" class="rounded-full">
-                </a>
-                <a href="#" class="text-light-text/50 hover:text-primary-accent transition">
-                    <img src="https://placehold.co/24x24/10b981/0f172a?text=L" alt="LinkedIn" class="rounded-full">
-                </a>
-            </div>
-            <p class="text-sm text-light-text/40 mt-4">
-                &copy; 2024. DIGITAL DOMAIN. All rights reserved.
-            </p>
-        </div>
+    <footer class="bg-black py-8 border-t border-white/10 text-center text-slate-600 text-xs tracking-wider">
+        <p>&copy; 2024 [YOUR NAME]. All Rights Reserved.</p>
     </footer>
 
-    <!-- JavaScript for interactivity -->
+    <!-- 拡張されたモーダル -->
+    <div id="project-modal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6 pointer-events-none">
+            <div class="bg-[#0f172a] w-full max-w-7xl max-h-[95vh] rounded-xl overflow-hidden shadow-2xl flex flex-col pointer-events-auto border border-white/10 relative animate-fade-in-up">
+                
+                <button onclick="closeModal()" class="absolute top-4 right-4 z-20 p-2 bg-black/60 text-white rounded-full hover:bg-primary transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col lg:flex-row">
+                    <!-- 左側：画像ギャラリー (スクロール可能) -->
+                    <div class="lg:w-7/12 bg-black bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] overflow-y-auto custom-scrollbar">
+                        <div id="modal-gallery-container" class="flex flex-col gap-8 p-4 md:p-8 min-h-min">
+                            <!-- JSで画像をここに挿入します -->
+                        </div>
+                    </div>
+                    
+                    <!-- 右側：詳細情報 -->
+                    <div class="lg:w-5/12 p-8 lg:p-10 bg-[#0f172a] border-l border-white/5 flex flex-col gap-8 h-full overflow-y-auto custom-scrollbar">
+                        <div>
+                            <span class="text-primary text-xs font-bold tracking-widest uppercase mb-2 block" id="modal-category">Category</span>
+                            <h3 id="modal-title" class="text-3xl md:text-4xl font-cinzel font-bold text-white leading-tight mb-4"></h3>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300" id="modal-duration-badge"></span>
+                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300" id="modal-poly"></span>
+                            </div>
+                        </div>
+
+                        <!-- タブのようなセクション切り替え -->
+                        <div class="space-y-6">
+                            <div class="border-l-2 border-primary pl-4">
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-2">Concept & Description</h4>
+                                <p id="modal-description" class="text-sm text-slate-300 leading-relaxed font-light"></p>
+                            </div>
+
+                            <div class="border-l-2 border-secondary pl-4">
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-2">My Role</h4>
+                                <p id="modal-role" class="text-sm text-slate-300 leading-relaxed font-light"></p>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-8 border-t border-white/5">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Technical Details</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="block text-slate-500 text-xs">Tools</span>
+                                    <span id="modal-tools" class="text-white"></span>
+                                </div>
+                                <div>
+                                    <span class="block text-slate-500 text-xs">Texture Size</span>
+                                    <span id="modal-texture" class="text-white"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- モバイルメニューのトグル機能 ---
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
+        // 画像
+        const backgroundImages = [
+            "uploaded:ohunesan.jpg-b1dba34d-5e6f-4321-983d-b4585bad3ff8",
+            "uploaded:wire.jpg-c0739aed-ff82-4781-ae14-cc10615878be",
+            "uploaded:kkk.jpg-a38d4ade-ca56-43e7-b93e-6350a38e0f8c",
+            "uploaded:ohunesan.jpg-d1eb018c-cef0-4a4a-a143-937bf7cfe4b3"
+        ];
         
-        // モバイルメニューのリンクがクリックされたらメニューを閉じる
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.add('hidden');
+        // 拡張された作品データ (画像とキャプションのペアに変更)
+        const projects = [
+            {
+                id: 1,
+                title: "Groningen Canal",
+                category: "Realistic Environment",
+                description: "オランダ・フローニンゲンの静寂な運河を再現しました。早朝の冷たく澄んだ空気感を表現するため、青みを帯びたライティングと、水面の微妙な揺らぎに注力しています。建物のレンガは経年劣化を表現するため、Substance Designerでカスタムマテリアルを作成しました。",
+                role: "リファレンス収集から最終レンダリングまでの全工程を担当。特に建物のモジュラー設計と、Vertex Paintによる汚れのブレンド処理に注力しました。",
+                duration: "8 Weeks",
+                tools: "UE5, Maya, Substance Painter",
+                polyCount: "~2M Tris",
+                textureSize: "4K (Hero), 2K (Props)",
+                thumbnailUrl: "uploaded:https://raw.githubusercontent.com/NAka2324/Portfolio/refs/heads/main/image/ohunesan_result.jpg",
+                // ギャラリー画像リスト (画像URLとキャプションのオブジェクト配列)
+                gallery: [
+                    {
+                        url: "uploaded:ohunesan.jpg-b8ef5f68-b845-4819-9053-98491a07642d",
+                        caption: "Final Render - 早朝の静寂な空気感を目指してライティング調整を行いました。"
+                    },
+                    {
+                        url: "uploaded:wire.jpg-c0739aed-ff82-4781-ae14-cc10615878be",
+                        caption: "Wireframe - 建物はモジュラー構造で作成し、効率的に配置しています。"
+                    },
+                    {
+                        url: "uploaded:kkk.jpg-a38d4ade-ca56-43e7-b93e-6350a38e0f8c",
+                        caption: "Lighting Pass - 詳細なテクスチャを適用する前のライティング確認（Clay Render）。"
+                    },
+                    {
+                        url: "uploaded:ohunesan.jpg-d1eb018c-cef0-4a4a-a143-937bf7cfe4b3",
+                        caption: "Material Detail - Substance Designerで作成したレンガのマテリアル。"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Ancient Ruins",
+                category: "Game Environment",
+                description: "失われた文明の遺跡。プレイヤーを奥へと誘うような構図と、プロシージャル生成を用いた岩のディテールが特徴です。ライティングは神秘的な雰囲気を出すためにGod Rayを活用しています。",
+                role: "レベルデザイン、ライティング、主要アセットの作成。岩の配置にはプロシージャルツールを使用し、効率的な背景制作を行いました。",
+                duration: "6 Weeks",
+                tools: "Blender, ZBrush, Marmoset",
+                polyCount: "~1.5M Tris",
+                textureSize: "2K UDIMs",
+                thumbnailUrl: "https://placehold.co/800x450/2a2a2a/ffffff?text=Ancient+Ruins",
+                gallery: [
+                     { url: "https://placehold.co/1200x800/2a2a2a/ffffff?text=Ancient+Ruins+Main", caption: "Main Shot - 神秘的な遺跡の全景" },
+                     { url: "https://placehold.co/1200x800/2a2a2a/ffffff?text=Ancient+Ruins+Detail+1", caption: "Detail - 岩肌のディテール" },
+                     { url: "https://placehold.co/1200x800/2a2a2a/ffffff?text=Ancient+Ruins+Detail+2", caption: "Lighting - 光の差し込み表現" },
+                     { url: "https://placehold.co/1200x800/2a2a2a/ffffff?text=Ancient+Ruins+Wireframe", caption: "Wireframe" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Deep Space Lab",
+                category: "Cinematics",
+                description: "無機質で冷徹なSF研究所。映画的なルックを目指し、金属の質感とライティングの反射を入念に調整しました。物語性を感じさせる小道具の配置にもこだわっています。",
+                role: "コンセプトアートに基づく3Dシーン構築。ハードサーフェスモデリングと、Nukeを使用したコンポジット処理を担当。",
+                duration: "5 Weeks",
+                tools: "Houdini, Clarisse, Nuke",
+                polyCount: "High Poly",
+                textureSize: "4K/8K",
+                thumbnailUrl: "https://placehold.co/800x450/1a1a2e/ffffff?text=Sci-Fi+Lab",
+                gallery: [
+                    { url: "https://placehold.co/1200x800/1a1a2e/ffffff?text=Sci-Fi+Lab+Main", caption: "Main Shot - 無機質な研究所内部" },
+                    { url: "https://placehold.co/1200x800/1a1a2e/ffffff?text=Sci-Fi+Lab+Angle+2", caption: "Angle 2 - 別アングルからの構図" },
+                    { url: "https://placehold.co/1200x800/1a1a2e/ffffff?text=Sci-Fi+Lab+Clay", caption: "Clay Render" },
+                    { url: "https://placehold.co/1200x800/1a1a2e/ffffff?text=Sci-Fi+Lab+Process", caption: "Composite Process" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Zen Garden",
+                category: "Asset Creation",
+                description: "静寂に包まれた日本庭園。SpeedTreeを用いた植生のリアリズムと、Substance Designerによる石畳の質感にこだわりました。風に揺れる木々の動きも設定しています。",
+                role: "植生アセットの作成、マテリアル作成、シーンアセンブリ。和風独特の侘び寂びを表現するためのテクスチャ調整を担当。",
+                duration: "4 Weeks",
+                tools: "UE4, SpeedTree, Substance",
+                polyCount: "~800k Tris",
+                textureSize: "2K Tiled",
+                thumbnailUrl: "https://placehold.co/800x450/2e3830/ffffff?text=Zen+Garden",
+                gallery: [
+                    { url: "https://placehold.co/1200x800/2e3830/ffffff?text=Zen+Garden+Main", caption: "Main Shot - 日本庭園の全景" },
+                    { url: "https://placehold.co/1200x800/2e3830/ffffff?text=Zen+Garden+Assets", caption: "Vegetation Assets - 植生アセット一覧" },
+                    { url: "https://placehold.co/1200x800/2e3830/ffffff?text=Zen+Garden+Night", caption: "Night Scene - 夜間のライティング" },
+                    { url: "https://placehold.co/1200x800/2e3830/ffffff?text=Zen+Garden+Material", caption: "Material Graph - 石畳のマテリアルノード" }
+                ]
+            }
+        ];
+
+        // スライダー機能
+        let currentImageIndex = 0;
+        let sliderElements = [];
+        function renderBackgroundSlider() {
+            const container = document.getElementById('hero-background');
+            if (!container) return;
+            backgroundImages.forEach((url, index) => {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'slider-image-container absolute inset-0';
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = 'w-full h-full object-cover';
+                imgContainer.appendChild(img);
+                container.appendChild(imgContainer);
+                sliderElements.push(imgContainer);
             });
+            if (sliderElements.length > 0) sliderElements[0].classList.add('active');
+            setInterval(() => {
+                sliderElements[currentImageIndex].classList.remove('active');
+                currentImageIndex = (currentImageIndex + 1) % sliderElements.length;
+                sliderElements[currentImageIndex].classList.add('active');
+            }, 3000);
+        }
+
+        // プロジェクト描画
+        function renderProjects() {
+            const grid = document.getElementById('portfolio-grid');
+            if (!grid) return;
+            projects.forEach((project, index) => {
+                const card = document.createElement('div');
+                card.style.transitionDelay = `${index * 100}ms`;
+                card.className = 'portfolio-card bg-[#1a1a1a] shadow-2xl cursor-pointer group reveal';
+                card.innerHTML = `
+                    <img src="${project.thumbnailUrl}" alt="${project.title}" loading="lazy">
+                    <div class="overlay">
+                        <span class="text-primary text-xs font-bold tracking-widest uppercase mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">${project.category}</span>
+                        <h3 class="text-2xl font-cinzel font-bold text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">${project.title}</h3>
+                    </div>
+                `;
+                card.onclick = () => openModal(project.id);
+                grid.appendChild(card);
+            });
+        }
+
+        // モーダル機能 (更新: ギャラリーキャプション対応)
+        function openModal(id) {
+            const p = projects.find(x => x.id === id);
+            if (!p) return;
+            
+            // テキスト情報の設定
+            document.getElementById('modal-title').textContent = p.title;
+            document.getElementById('modal-category').textContent = p.category;
+            document.getElementById('modal-description').textContent = p.description;
+            document.getElementById('modal-role').textContent = p.role;
+            document.getElementById('modal-duration-badge').textContent = p.duration;
+            document.getElementById('modal-poly').textContent = p.polyCount;
+            document.getElementById('modal-tools').textContent = p.tools;
+            document.getElementById('modal-texture').textContent = p.textureSize;
+            
+            // ギャラリー画像の生成
+            const galleryContainer = document.getElementById('modal-gallery-container');
+            galleryContainer.innerHTML = ''; // クリア
+
+            // galleryデータが存在すればそれを使用
+            // データ構造変更: item は { url: string, caption: string } または string (後方互換用)
+            const items = p.gallery && p.gallery.length > 0 ? p.gallery : [p.thumbnailUrl];
+
+            items.forEach(item => {
+                const itemContainer = document.createElement('div');
+                itemContainer.className = "mb-8"; // 画像間の余白
+
+                // 画像
+                const img = document.createElement('img');
+                const url = typeof item === 'string' ? item : item.url;
+                img.src = url;
+                img.className = "w-full h-auto object-cover rounded shadow-lg mb-3";
+                img.alt = p.title;
+                itemContainer.appendChild(img);
+
+                // キャプション
+                if (typeof item === 'object' && item.caption) {
+                    const caption = document.createElement('p');
+                    caption.textContent = item.caption;
+                    caption.className = "text-slate-400 text-sm italic border-l-2 border-primary/50 pl-3";
+                    itemContainer.appendChild(caption);
+                }
+
+                galleryContainer.appendChild(itemContainer);
+            });
+            
+            const modal = document.getElementById('project-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('project-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // スクロール検知
+        function setupScrollAnimation() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        // モバイルメニュー
+        document.getElementById('mobile-menu-button').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         });
 
-
-        // --- 作品詳細モーダル機能 ---
-        const modal = document.getElementById('work-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalDescription = document.getElementById('modal-description');
-        const modalImage = document.getElementById('modal-image');
-
-        /**
-         * 作品カードクリック時に詳細モーダルを表示
-         * @param {string} title - 作品のタイトル
-         * @param {string} description - 作品の簡単な説明
-         * @param {string} imageUrl - 作品画像のURL
-         */
-        function showWorkDetails(title, description, imageUrl) {
-            modalTitle.textContent = title;
-            modalDescription.textContent = description;
-            modalImage.src = imageUrl; // プレースホルダー画像をセット
-            modalImage.onerror = function() {
-                // 画像ロード失敗時の代替テキスト
-                modalImage.alt = "作品画像が見つかりません";
-            };
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden'; // 背景のスクロールを停止
-        }
-
-        /**
-         * モーダルを閉じる
-         */
-        function closeModal() {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = ''; // 背景のスクロールを再開
-        }
-
-        // ESCキーでモーダルを閉じる
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
-                closeModal();
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBackgroundSlider();
+            renderProjects();
+            setupScrollAnimation();
         });
     </script>
 </body>
